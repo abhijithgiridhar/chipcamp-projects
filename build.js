@@ -2,6 +2,7 @@
 const fs = require('fs');
 const path = require('path');
 const P = require('./projects.js');
+const CAT = require('./catalog.js');
 const root = (p) => path.join(__dirname, p);
 const OUT = root('docs');
 const CSS = fs.readFileSync(root('src/site.css'), 'utf8');
@@ -81,7 +82,7 @@ function wiringTable(rows) {
 const logo = '<span class="logo"><i style="background:#ffbf00"></i><i style="background:#4c97ff"></i><i style="background:#3fb950"></i><i style="background:#ff6680"></i></span>';
 function shell(title, body, opts) {
   opts = opts || {};
-  const nav = [['index.html', 'Projects'], ['start.html', 'Getting started'], ['box.html', 'Your box']]
+  const nav = [['index.html', 'Projects'], ['start.html', 'Getting started'], ['box.html', 'Your box'], ['buy.html', 'Buy parts'], ['learn.html', 'Learn more']]
     .map((n) => '<a href="' + n[0] + '"' + (opts.page === n[0] ? ' aria-current="page"' : '') + '>' + n[1] + '</a>').join('');
   return '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">' +
     '<title>' + esc(title) + '</title><meta name="description" content="' + esc(opts.desc || 'Fifteen Arduino projects for the Chip Camp take-home kit.') + '">' +
@@ -109,15 +110,18 @@ function projectPage(p, i) {
   b += '<section class="block"><h2>What you will make</h2><p>' + esc(p.intro) + '</p>';
   if (p.noRes) b += '<div class="note"><b>No resistors?</b> ' + esc(p.noRes) + '</div>';
   b += '</section>';
-  b += '<section class="block"><h2>What you need</h2><ul class="parts">' + p.parts.map((x) => '<li class="' + (/not in the box/.test(x[0]) ? 'miss' : '') + '"><b>' + x[1] + '</b>' + esc(x[0]) + '</li>').join('') + '</ul></section>';
+  b += '<section class="block"><h2>What you need</h2><ul class="parts">' + p.parts.map((x) => '<li class="' + (/not in the box/.test(x[0]) ? 'miss' : '') + '"><b>' + x[1] + '</b>' + esc(x[0]) + '</li>').join('') + '</ul>' + (p.parts.some((x) => /not in the box/.test(x[0])) ? '<p><a class="btn" target="_blank" rel="noopener" href="' + CAT.shops[0].search + encodeURIComponent('220 ohm resistor') + '">Find 220 Ω resistors on Robocraze</a> <a class="btn" href="buy.html">More shops</a></p>' : '') + '<p class="soft">Each part is described on <a href="box.html">Your box</a>.</p></section>';
   b += '<section class="block"><h2>Build it</h2><ol class="steps">' + p.steps.map((s) => '<li>' + esc(s) + '</li>').join('') + '</ol>';
   if (p.rows.length) {
     b += '<h2>Wiring</h2><div class="diagram">' + diagram(p.rows) + '</div>' + wiringTable(p.rows) +
-      '<div class="tip">Always change wires with the USB unplugged. Orange is a signal wire, red is power (5 V) and dark is ground. Your real jumpers can be any colour.</div>';
+      '<h3>Tick each wire when it is done</h3><ul class="ticks">' + p.rows.map((r) => '<li><label><input type="checkbox"> ' + esc(r.items[0].replace('pin:', '')) + ' → ' + esc(r.items[r.items.length - 1].replace('end:', '')) + '</label></li>').join('') + '</ul><div class="note"><b>Before you plug in the USB:</b> every box above is ticked and no bare metal legs touch each other.' + (p.rows.some((r) => r.items.some((i) => i.indexOf('res:') === 0)) ? ' The long leg of each LED goes to the resistor side.' : '') + '</div><div class="tip">Always change wires with the USB unplugged. Orange is a signal wire, red is power (5 V) and dark is ground. Your real jumpers can be any colour.</div>';
   }
   b += '</section><section class="block"><h2>The code</h2><p>Open the Arduino IDE, delete everything in the window, paste this, and press Upload. Board settings are on the <a href="start.html">Getting started</a> page.</p>' + p.sketches.map(code).join('');
   if (p.table) b += '<table><tr>' + p.table.head.map((h) => '<th>' + h + '</th>').join('') + '</tr>' + p.table.rows.map((r) => '<tr>' + r.map((c) => '<td>' + esc(c) + '</td>').join('') + '</tr>').join('') + '</table>';
   b += '</section><section class="block"><h2>What you should see</h2><p>' + esc(p.see) + '</p><h2>How it works</h2><ul class="plain">' + p.how.map((h) => '<li>' + esc(h) + '</li>').join('') + '</ul></section>';
+  const srcAll = p.sketches.map((sk) => fs.readFileSync(root('sketches/' + sk.file + '/' + sk.file + '.ino'), 'utf8')).join('\n');
+  const refs = Object.keys(CAT.ref).filter((k) => new RegExp('\\b' + k + (k === 'Serial' ? '\\.' : '\\(')).test(srcAll));
+  if (refs.length) b += '<section class="block"><h2>Look it up</h2><p>Every command in this sketch is explained on the Arduino site:</p><div class="pillrow">' + refs.map((k) => '<a class="pill blue" target="_blank" rel="noopener" href="' + CAT.ref[k][1] + '">' + CAT.ref[k][0] + '</a>').join('') + '</div><p>More like this: <a href="learn.html">projects and tutorials online</a>.</p></section>';
   b += '<section class="block"><h2>Try this</h2><ul class="plain">' + p.tryThis.map((h) => '<li>' + esc(h) + '</li>').join('') + '</ul></section>';
   b += '<section class="block"><h2>If it does not work</h2>' + p.fix.map((f) => '<details><summary>' + esc(f[0]) + '</summary><p>' + esc(f[1]) + '</p></details>').join('') + '</section>';
   b += '<button class="btn go built" data-built="' + p.id + '">I built it!</button>';
@@ -184,25 +188,11 @@ const tile = (kind, color) => {
   return base + '<path d="M20 60 C50 10 80 90 110 40 S160 20 180 30" stroke="' + color + '" stroke-width="7" fill="none" stroke-linecap="round"/></svg>';
 };
 function boxPage() {
-  const parts = [
-    ['nano', '#2fa6a0', 'Arduino Nano', 'The brain. It runs your code. Plugs into the base board.', 'Pins: USB at one end. Do not touch the metal pins while it is on.'],
-    ['nano', '#4c97ff', 'Nano base board', 'Gives every pin three sockets: S (signal), V (5 volts) and G (ground).', 'Most modules plug in with three jumpers.'],
-    ['jumper', '#7c4dff', 'USB cable', 'Power and code come through here.', 'If the computer cannot see the Nano, try another cable.'],
-    ['led', '#ef4444', '25 LEDs (assorted colours)', 'Lights. They work one way round only.', 'Long leg is plus (+), short leg is minus. They need a 220 Ω resistor.'],
-    ['led', '#d946ef', '5 RGB LEDs', 'Three LEDs in one. Red, green and blue.', 'Four legs. The longest is the shared ground (usually). Needs three resistors.'],
-    ['module', '#22c55e', 'IR sensor module', 'Sees things right in front of it with invisible light.', 'Pins: OUT, VCC, GND. Output goes LOW when it sees something. A tiny screw sets how far it sees.'],
-    ['module', '#8b5cf6', 'Light sensor module (LDR)', 'The number changes with the light in the room.', 'Use the AO pin for numbers. Pins: AO, VCC, GND (some also have DO).'],
-    ['buzzer', '#2b2f4a', 'Buzzer', 'Beeps. Project 5 tells you if it is the kind that plays notes.', 'Two legs. The longer leg is plus (+).'],
-    ['module', '#06b6d4', 'Touch sensor module', 'A pad that feels your finger.', 'Pins: I/O, VCC, GND. Output goes HIGH when touched.'],
-    ['module', '#2563eb', 'Raindrop sensor', 'A module plus a sensing pad on a cable. Water on the pad lowers the number.', 'Pins on the module: AO, DO, GND, VCC. Keep the module dry, the pad can get wet.'],
-    ['module', '#0d9488', 'Water level sensor', 'A strip with copper lines. More water, bigger number.', 'Pins: S, +, -. Dip only the lines. Dry it after use.'],
-    ['module', '#0ea5e9', 'Ultrasonic sensor (HC-SR04)', 'Measures distance with sound.', 'Pins: VCC, Trig, Echo, GND.'],
-    ['bb', '#f5f5f2', '400-point breadboard', 'A board for building circuits without soldering.', 'Holes in a short row of five are joined. The long strips on the sides are power rails.'],
-    ['jumper', '#f59e0b', '3 packs of jumper wires (40 each)', 'Female-female, male-female and male-male. Check the ends of the wire.', 'Female end has a hole, male end has a pin.']
-  ];
-  let b = '<div class="wrap"><div class="hero"><div><h1>What is in my box?</h1><p class="lead">Fourteen things. Here is what each does, and the pins you will plug wires into.</p></div><div class="art">' + ART.html('kid') + '</div></div>';
-  b += '<div class="parttiles">' + parts.map((x) => '<div class="ptile">' + tile(x[0], x[1]) + '<h3>' + esc(x[2]) + '</h3><p>' + esc(x[3]) + '</p><p><b>Good to know:</b> ' + esc(x[4]) + '</p></div>').join('') + '</div>';
-  b += '<div class="note" style="margin-top:20px"><b>Not in the box: resistors.</b> A resistor limits the current. LEDs need one. Buy a small pack of 220 Ω resistors (any value from 150 to 470 Ω works) at any electronics shop. The colours on a 220 Ω are red, red, brown. Projects 2 and 10 need them. Projects 3, 4 and 15 work without them by using the light on the Nano.</div>';
+  const parts = CAT.parts.map((x) => [x.kind, x.color, x.name + (x.qty !== '1' ? ' (' + x.qty + ')' : ''), x.what, x.know]);
+  let b = '<div class="wrap"><div class="hero"><div><h1>What is in my box?</h1><p class="lead">The full list of what came in the box, what each part is for, and which projects use it.</p></div><div class="art">' + ART.html('kid') + '</div></div>';
+  b += '<section class="block"><h2>The full list</h2><table><tr><th>Part</th><th>How many</th><th>Used in project</th></tr>' + CAT.parts.map((x) => '<tr><td><b>' + esc(x.name) + '</b></td><td>' + esc(x.qty) + '</td><td>' + esc(x.used === 'all' ? 'all of them' : x.used) + '</td></tr>').join('') + '</table><p>Count them when you open the box. If something is missing or broken, tell your trainer. You can also <a href="buy.html">buy a spare</a>.</p></section>';
+  b += '<h2>What each part is</h2><div class="parttiles">' + parts.map((x) => '<div class="ptile">' + tile(x[0], x[1]) + '<h3>' + esc(x[2]) + '</h3><p>' + esc(x[3]) + '</p><p><b>Good to know:</b> ' + esc(x[4]) + '</p></div>').join('') + '</div>';
+  b += '<div class="note" style="margin-top:20px"><b>Not in the box: resistors.</b> A resistor limits the current. LEDs need one. Buy a small pack of 220 Ω resistors (any value from 150 to 470 Ω works) at any electronics shop. The colours on a 220 Ω are red, red, brown. Projects 2 and 10 need them. Projects 3, 4 and 15 work without them by using the light on the Nano. <a href="buy.html">Where to buy</a>.</div>';
   b += '<section class="block"><h2>How the base board works</h2><p>Each pin on the Nano has three sockets on the base board in a row.</p><table><tr><th>Letter</th><th>What it is</th><th>Wire colour in this site</th></tr><tr><td><b>S</b></td><td>Signal. The pin the code talks to.</td><td>Orange</td></tr><tr><td><b>V</b></td><td>5 volts of power.</td><td>Red</td></tr><tr><td><b>G</b></td><td>Ground. The way back.</td><td>Dark</td></tr></table></section>';
   b += '<section class="block"><h2>How the breadboard works</h2>' +
     '<div class="diagram"><svg viewBox="0 0 640 170" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="10" y="10" width="620" height="150" rx="14" fill="#f5f5f2" stroke="#d3def6" stroke-width="3"/>' +
@@ -214,11 +204,28 @@ function boxPage() {
   return shell('Your box · Chip Camp Kit', b, { page: 'box.html' });
 }
 
+function buyPage() {
+  const link = (shop, term) => shop.search ? '<a href="' + shop.search + encodeURIComponent(term) + '" target="_blank" rel="noopener">' + shop.name + '</a>' : '';
+  let b = '<div class="wrap"><div class="hero"><div><h1>Where to buy parts</h1><p class="lead">Spares, resistors, and things to grow your kit. Prices and stock change, so check the shop.</p></div><div class="art">' + ART.html('chip') + '</div></div>';
+  b += '<section class="block"><h2>You need these for the projects</h2><table><tr><th>Part</th><th>Why</th><th>Search on</th></tr>' + CAT.missing.map((x) => '<tr><td><b>' + esc(x.name) + '</b></td><td>' + esc(x.why) + '</td><td>' + CAT.shops.filter((z) => z.search).map((z) => link(z, x.search)).join(' · ') + '</td></tr>').join('') + '</table><div class="tip">Ask for "220 ohm, quarter watt, through hole". A pack of 100 costs very little and lasts a long time.</div></section>';
+  b += '<section class="block"><h2>Spares for what is in your box</h2><table><tr><th>Part</th><th>Search on</th></tr>' + CAT.parts.map((x) => '<tr><td><b>' + esc(x.name) + '</b></td><td>' + CAT.shops.filter((z) => z.search).map((z) => link(z, x.search)).join(' · ') + '</td></tr>').join('') + '</table></section>';
+  b += '<section class="block"><h2>Ideas for your next purchase</h2><table><tr><th>Part</th><th>What you could make</th><th>Search on</th></tr>' + CAT.next.map((x) => '<tr><td><b>' + esc(x.name) + '</b></td><td>' + esc(x.why) + '</td><td>' + CAT.shops.filter((z) => z.search).slice(0, 3).map((z) => link(z, x.search)).join(' · ') + '</td></tr>').join('') + '</table></section>';
+  b += '<section class="block"><h2>Shops</h2><ul class="plain">' + CAT.shops.map((z) => '<li><a href="' + z.url + '" target="_blank" rel="noopener"><b>' + z.name + '</b></a>: ' + esc(z.note) + '</li>').join('') + '</ul><div class="note">We are not paid by any shop. The links are searches, so you always see what is in stock. Ask an adult before you order online. Buy modules with the same names as in your box so the projects keep working.</div></section></div>';
+  return shell('Buy parts · Chip Camp Kit', b, { page: 'buy.html' });
+}
+function learnPage() {
+  let b = '<div class="wrap"><div class="hero"><div><h1>Learn more</h1><p class="lead">Finished the 15? These are good places to go next.</p></div><div class="art">' + ART.html('kids') + '</div></div>';
+  b += CAT.learn.map((g) => '<section class="block"><h2>' + esc(g.group) + '</h2><ul class="plain">' + g.items.map((i) => '<li><a href="' + i[1] + '" target="_blank" rel="noopener"><b>' + esc(i[0]) + '</b></a>: ' + esc(i[2]) + '</li>').join('') + '</ul></section>').join('');
+  b += '<section class="block"><h2>Make your own project</h2><ol class="steps"><li>Pick one of the 15 and change one thing. A different sensor, a different sound, a different rule.</li><li>Draw what should happen before you write code: "when this, then that".</li><li>Get one part working at a time. Check it in the Serial Monitor.</li><li>When it works, write down the wiring so you can build it again.</li></ol></section></div>';
+  return shell('Learn more · Chip Camp Kit', b, { page: 'learn.html' });
+}
 fs.rmSync(OUT, { recursive: true, force: true });
 fs.mkdirSync(OUT, { recursive: true });
 fs.writeFileSync(path.join(OUT, 'index.html'), indexPage());
 fs.writeFileSync(path.join(OUT, 'start.html'), startPage());
 fs.writeFileSync(path.join(OUT, 'box.html'), boxPage());
+fs.writeFileSync(path.join(OUT, 'buy.html'), buyPage());
+fs.writeFileSync(path.join(OUT, 'learn.html'), learnPage());
 P.forEach((p, i) => fs.writeFileSync(path.join(OUT, p.slug + '.html'), projectPage(p, i)));
 fs.writeFileSync(path.join(OUT, '.nojekyll'), '');
-console.log('built ' + (P.length + 3) + ' pages into docs/');
+console.log('built ' + (P.length + 5) + ' pages into docs/');
