@@ -94,3 +94,5 @@ footer{text-align:center;color:var(--soft);font-size:14px;padding:20px 18px 40px
 
 ul.ticks{list-style:none;padding:0;margin:.4em 0;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:6px}ul.ticks li{background:#f4f7ff;border:2px solid var(--line);border-radius:12px;padding:6px 10px}ul.ticks input{width:20px;height:20px;vertical-align:middle;accent-color:var(--pc)}ul.ticks label{cursor:pointer}.soft{color:var(--soft);font-size:15px}
 .nav a{margin-bottom:2px}
+
+code{font-family:var(--m);font-size:13.5px;background:#f4f7ff;border:1px solid var(--line);border-radius:6px;padding:1px 6px}

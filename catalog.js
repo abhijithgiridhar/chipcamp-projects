@@ -31,7 +31,6 @@ module.exports = {
   ],
   shops: [
     { name: 'Robocraze', url: 'https://robocraze.com', search: 'https://robocraze.com/search?q=', note: 'Bengaluru. Good for kits and modules.' },
-    { name: 'Sunrom Electronics', url: 'https://www.sunrom.com', search: 'https://www.sunrom.com/search?q=', note: 'Components, sensors and modules.' },
     { name: 'Robu.in', url: 'https://robu.in', search: 'https://robu.in/?post_type=product&s=', note: 'Wide range of boards and sensors.' },
     { name: 'Think Robotics', url: 'https://thinkrobotics.com', search: '', note: 'Arduino boards and modules.' },
     { name: 'Electronicscomp', url: 'https://www.electronicscomp.com', search: '', note: 'Components and modules.' },
