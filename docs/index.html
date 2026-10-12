@@ -1,0 +1,129 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Chip Camp Kit · 15 projects</title><meta name="description" content="Fifteen Arduino projects for the Chip Camp take-home kit."><style>@import url("https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&family=Nunito:wght@600;700;800&family=JetBrains+Mono:wght@400;700&display=swap");
+:root{
+  --ink:#2b2f4a; --soft:#69709a; --bg:#eef3ff; --card:#fff; --line:#d3def6;
+  --purple:#7c4dff; --blue:#4c97ff; --green:#3fb950; --gold:#fdb515; --pc:#7c4dff;
+  --d:"Fredoka","Arial Rounded MT Bold","Trebuchet MS",system-ui,sans-serif;
+  --b:"Nunito","Segoe UI","Trebuchet MS",system-ui,sans-serif;
+  --m:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--b);font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:var(--purple)}
+h1,h2,h3{font-family:var(--d);font-weight:600;line-height:1.15;margin:0 0 .4em}
+h2{font-size:28px;margin-top:1.6em}
+h3{font-size:20px}
+p{margin:.5em 0}
+.wrap{max-width:980px;margin:0 auto;padding:0 18px}
+.top{background:linear-gradient(90deg,#7c4dff,#4c97ff);color:#fff;box-shadow:0 3px 0 rgba(0,0,0,.12)}
+.top .wrap{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding-top:10px;padding-bottom:10px}
+.brand{font-family:var(--d);font-size:22px;font-weight:600;color:#fff;text-decoration:none;display:flex;align-items:center;gap:8px;margin-right:auto}
+.brand i{width:12px;height:12px;border-radius:4px;display:block}
+.logo{display:grid;grid-template-columns:repeat(2,12px);gap:3px;transform:rotate(-8deg)}
+.nav a{font-family:var(--d);font-size:17px;color:#fff;text-decoration:none;padding:6px 14px;border-radius:14px;background:rgba(255,255,255,.18);margin-left:6px;display:inline-block}
+.nav a:hover,.nav a[aria-current]{background:#fff;color:var(--purple)}
+.hero{display:grid;grid-template-columns:1fr 200px;gap:16px;align-items:center;padding:34px 0 10px}
+.hero h1{font-size:44px}
+.hero p.lead{font-size:20px;color:var(--soft);max-width:30em}
+.hero .art svg{width:100%;height:auto;display:block}
+.pillrow{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
+.pill{font-family:var(--d);font-size:14px;border-radius:99px;padding:3px 12px;background:#fff;border:2px solid var(--line);color:var(--ink);white-space:nowrap}
+.pill.warn{background:#fff3d6;border-color:#f5c25a}
+.pill.ok{background:#e2f7e6;border-color:#9fdcab}
+.pill.blue{background:#e5f0ff;border-color:#a9c9ff}
+.btn{border:2px solid #d3def6;cursor:pointer;font-family:var(--d);font-weight:500;font-size:16px;padding:8px 16px;border-radius:14px;background:#fff;color:var(--ink);box-shadow:0 3px 0 #c9d6f2;display:inline-flex;align-items:center;gap:6px;text-decoration:none}
+.btn:hover{transform:translateY(-1px)}
+.btn:active{transform:translateY(2px);box-shadow:0 1px 0 #c9d6f2}
+.btn.go{background:var(--green);border-color:#2c8f3b;color:#fff;box-shadow:0 4px 0 #2c8f3b}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin:16px 0 30px}
+.card{background:#fff;border:2px solid var(--line);border-radius:20px;overflow:hidden;text-decoration:none;color:var(--ink);display:flex;flex-direction:column;transition:transform .12s;box-shadow:0 4px 0 var(--line)}
+.card:hover{transform:translateY(-3px)}
+.card .band{background:var(--pc);color:#fff;padding:14px 16px;display:flex;align-items:center;gap:12px}
+.card .num{font-family:var(--d);font-size:30px;font-weight:600;background:rgba(255,255,255,.25);width:46px;height:46px;border-radius:14px;display:grid;place-items:center;flex:none}
+.card .band h3{margin:0;font-size:20px;color:#fff}
+.card .body{padding:12px 16px 16px;flex:1;display:flex;flex-direction:column;gap:10px}
+.card .body p{margin:0;font-size:15.5px}
+.card .done{margin-left:auto;font-size:22px;display:none}
+.card.is-done .done{display:block}
+section.block{background:#fff;border:2px solid var(--line);border-radius:20px;padding:6px 22px 18px;margin:18px 0;box-shadow:0 4px 0 var(--line)}
+section.block h2{margin-top:.7em;font-size:25px}
+.banner{background:var(--pc);color:#fff;border-radius:0 0 28px 28px;padding:26px 0 24px;box-shadow:0 5px 0 rgba(0,0,0,.14)}
+.banner .wrap{display:flex;gap:18px;align-items:center}
+.banner .num{font-family:var(--d);font-size:54px;font-weight:600;background:rgba(255,255,255,.25);width:86px;height:86px;border-radius:26px;display:grid;place-items:center;flex:none}
+.banner h1{margin:0;font-size:38px}
+.banner p{margin:4px 0 0;font-size:19px;opacity:.95}
+.banner .pill{border-color:transparent}
+ol.steps{padding:0;margin:.6em 0;list-style:none;counter-reset:s}
+ol.steps li{counter-increment:s;position:relative;padding:8px 0 8px 52px;min-height:46px}
+ol.steps li::before{content:counter(s);position:absolute;left:0;top:6px;width:36px;height:36px;border-radius:12px;background:var(--pc);color:#fff;font-family:var(--d);font-size:20px;display:grid;place-items:center}
+ul.plain{margin:.4em 0;padding-left:22px}
+ul.plain li{margin:.25em 0}
+ul.parts{list-style:none;padding:0;margin:.4em 0;display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px}
+ul.parts li{background:#f4f7ff;border:2px solid var(--line);border-radius:14px;padding:8px 12px;display:flex;gap:10px;align-items:center}
+ul.parts li b{font-family:var(--d);background:var(--pc);color:#fff;border-radius:10px;padding:0 9px;min-width:30px;text-align:center}
+ul.parts li.miss{background:#fff3d6;border-color:#f5c25a}
+.note{background:#fff3d6;border:2px solid #f5c25a;border-radius:16px;padding:10px 16px;margin:12px 0}
+.tip{background:#e5f0ff;border:2px solid #a9c9ff;border-radius:16px;padding:10px 16px;margin:12px 0}
+table{border-collapse:collapse;width:100%;font-size:15.5px;margin:.6em 0}
+th,td{border:2px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:#f4f7ff;font-family:var(--d);font-weight:500}
+.diagram{overflow-x:auto;background:#f9fbff;border:2px solid var(--line);border-radius:16px;padding:6px}
+.diagram svg{display:block;min-width:620px;width:100%;height:auto}
+.code{border:2px solid var(--line);border-radius:16px;overflow:hidden;margin:12px 0;background:#fff}
+.code .bar{display:flex;gap:8px;align-items:center;padding:8px 12px;background:#f4f7ff;border-bottom:2px solid var(--line);flex-wrap:wrap}
+.code .bar b{font-family:var(--d);font-weight:500;margin-right:auto}
+.code pre{margin:0;padding:12px 14px;overflow:auto;max-height:520px;font-family:var(--m);font-size:13.5px;line-height:1.5;color:#2b2f4a;tab-size:2}
+.t-c{color:#4f8a5b;font-style:italic}.t-k{color:#7c4dff;font-weight:700}.t-n{color:#d9731a}.t-s{color:#c0392b}.t-f{color:#1d7fbf}
+details{background:#f4f7ff;border:2px solid var(--line);border-radius:14px;margin:8px 0;padding:8px 14px}
+details summary{font-family:var(--d);cursor:pointer}
+.nextrow{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:26px 0 40px}
+.built{margin-top:10px}
+footer{text-align:center;color:var(--soft);font-size:14px;padding:20px 18px 40px}
+.parttiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px}
+.ptile{background:#fff;border:2px solid var(--line);border-radius:18px;padding:12px 14px}
+.ptile svg{width:100%;height:84px;background:#f4f7ff;border-radius:12px;margin-bottom:8px}
+.ptile h3{margin:0 0 4px;font-size:19px}
+.ptile p{margin:.25em 0;font-size:15px}
+@media(max-width:640px){
+  .hero{grid-template-columns:1fr}.hero .art{max-width:150px}.hero h1{font-size:34px}
+  .banner .wrap{flex-direction:column;align-items:flex-start}.banner h1{font-size:30px}
+  .nav a{margin:4px 4px 0 0}
+}
+@media print{.top,.nextrow,.btn,footer{display:none}}
+</style></head><body><header class="top"><div class="wrap"><a class="brand" href="index.html"><span class="logo"><i style="background:#ffbf00"></i><i style="background:#4c97ff"></i><i style="background:#3fb950"></i><i style="background:#ff6680"></i></span>Chip Camp Kit</a><nav class="nav"><a href="index.html" aria-current="page">Projects</a><a href="start.html">Getting started</a><a href="box.html">Your box</a></nav></div></header><div class="wrap"><div class="hero"><div><h1>Your Chip Camp kit, 15 projects</h1><p class="lead">Everything here uses only what is in your box. Start at project 1 and work your way up, or jump to whatever looks fun.</p><div class="pillrow"><a class="btn go" href="start.html">Start here: set up the Arduino IDE</a><a class="btn" href="box.html">What is in my box?</a></div><p><span class="pill" id="count">0 of 15 built</span></p></div><div class="art"><div class="art "><svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true"><ellipse cx="120" cy="226" rx="58" ry="9" fill="#2c2c34" opacity=".13"/><g stroke="#2d6a35" stroke-width="8" stroke-linecap="round" fill="none"><path d="M76 120 L42 100M76 146 L36 148M82 172 L50 196M164 120 L198 100M164 146 L204 148M158 172 L190 196"/><path d="M98 66 L84 34M142 66 L156 34"/></g><circle cx="84" cy="32" r="7" fill="#fdb515"/><circle cx="156" cy="32" r="7" fill="#fdb515"/><ellipse cx="120" cy="150" rx="56" ry="62" fill="#59c059" stroke="#2d6a35" stroke-width="8"/><path d="M120 92 V210" stroke="#2d6a35" stroke-width="6"/><circle cx="94" cy="140" r="10" fill="#2d6a35"/><circle cx="146" cy="168" r="10" fill="#2d6a35"/><circle cx="96" cy="184" r="7" fill="#2d6a35"/><circle cx="120" cy="78" r="34" fill="#59c059" stroke="#2d6a35" stroke-width="8"/><circle cx="106" cy="74" r="11" fill="#fff"/><circle cx="134" cy="74" r="11" fill="#fff"/><circle cx="108" cy="77" r="5" fill="#17302d"/><circle cx="132" cy="77" r="5" fill="#17302d"/><path d="M108 92 Q120 100 132 92" stroke="#2d6a35" stroke-width="5" fill="none" stroke-linecap="round"/></svg></div></div></div><div class="note"><b>One thing is not in the box:</b> resistors. Projects 2 and 10 need a few 220 Ω resistors from any electronics shop, and projects 3, 4 and 15 can use a real LED if you have them. Every project tells you before you start and shows what to do without them.</div><div class="grid"><a class="card" id="c-p01" href="hello-nano.html" style="--pc:#7c4dff"><div class="band"><span class="num">1</span><h3>Hello Nano</h3><span class="done">✓</span></div><div class="body"><p>Make the little light on your Nano blink, and make it talk.</p><div class="pillrow" style="margin:0"><span class="pill ok">No extra parts</span><span class="pill">10 min</span><span class="pill">★☆☆</span></div></div></a><a class="card" id="c-p02" href="traffic-light.html" style="--pc:#ef4444"><div class="band"><span class="num">2</span><h3>Traffic light</h3><span class="done">✓</span></div><div class="body"><p>Three LEDs that stop, get ready and go, just like the one on the road.</p><div class="pillrow" style="margin:0"><span class="pill warn">Needs 220 Ω resistors</span><span class="pill">25 min</span><span class="pill">★★☆</span></div></div></a><a class="card" id="c-p03" href="touch-lamp.html" style="--pc:#06b6d4"><div class="band"><span class="num">3</span><h3>Touch lamp</h3><span class="done">✓</span></div><div class="body"><p>Touch to switch a light on. Touch again to switch it off.</p><div class="pillrow" style="margin:0"><span class="pill blue">Resistor optional</span><span class="pill">15 min</span><span class="pill">★☆☆</span></div></div></a><a class="card" id="c-p04" href="night-light.html" style="--pc:#4f46e5"><div class="band"><span class="num">4</span><h3>Night light</h3><span class="done">✓</span></div><div class="body"><p>A lamp that switches itself on when the room goes dark.</p><div class="pillrow" style="margin:0"><span class="pill blue">Resistor optional</span><span class="pill">20 min</span><span class="pill">★★☆</span></div></div></a><a class="card" id="c-p05" href="buzzer-doorbell.html" style="--pc:#f59e0b"><div class="band"><span class="num">5</span><h3>Which buzzer? And a doorbell</h3><span class="done">✓</span></div><div class="body"><p>Find out what kind of buzzer you have, then make a tune.</p><div class="pillrow" style="margin:0"><span class="pill ok">No extra parts</span><span class="pill">20 min</span><span class="pill">★☆☆</span></div></div></a><a class="card" id="c-p06" href="burglar-alarm.html" style="--pc:#dc2626"><div class="band"><span class="num">6</span><h3>Burglar alarm</h3><span class="done">✓</span></div><div class="body"><p>An invisible beam that screams when somebody gets near.</p><div class="pillrow" style="margin:0"><span class="pill ok">No extra parts</span><span class="pill">20 min</span><span class="pill">★★☆</span></div></div></a><a class="card" id="c-p07" href="parking-sensor.html" style="--pc:#0891b2"><div class="band"><span class="num">7</span><h3>Parking sensor</h3><span class="done">✓</span></div><div class="body"><p>Beeps faster the closer you get, just like a car.</p><div class="pillrow" style="margin:0"><span class="pill ok">No extra parts</span><span class="pill">25 min</span><span class="pill">★★☆</span></div></div></a><a class="card" id="c-p08" href="rain-alarm.html" style="--pc:#2563eb"><div class="band"><span class="num">8</span><h3>Rain alarm</h3><span class="done">✓</span></div><div class="body"><p>Hang it out of the window and it tells you when the first drop falls.</p><div class="pillrow" style="margin:0"><span class="pill ok">No extra parts</span><span class="pill">20 min</span><span class="pill">★★☆</span></div></div></a><a class="card" id="c-p09" href="water-tank.html" style="--pc:#0d9488"><div class="band"><span class="num">9</span><h3>Water tank monitor</h3><span class="done">✓</span></div><div class="body"><p>Empty, low, half or full, shown on the screen and with a beep.</p><div class="pillrow" style="margin:0"><span class="pill ok">No extra parts</span><span class="pill">25 min</span><span class="pill">★★☆</span></div></div></a><a class="card" id="c-p10" href="mood-lamp.html" style="--pc:#d946ef"><div class="band"><span class="num">10</span><h3>Mood lamp</h3><span class="done">✓</span></div><div class="body"><p>A colour-changing lamp. Touch it to change its mood.</p><div class="pillrow" style="margin:0"><span class="pill warn">Needs 220 Ω resistors</span><span class="pill">35 min</span><span class="pill">★★★</span></div></div></a><a class="card" id="c-p11" href="reaction-game.html" style="--pc:#f97316"><div class="band"><span class="num">11</span><h3>Reaction game</h3><span class="done">✓</span></div><div class="body"><p>How fast are you? The Nano times you to the millisecond.</p><div class="pillrow" style="margin:0"><span class="pill ok">No extra parts</span><span class="pill">20 min</span><span class="pill">★★☆</span></div></div></a><a class="card" id="c-p12" href="light-theremin.html" style="--pc:#8b5cf6"><div class="band"><span class="num">12</span><h3>Light theremin</h3><span class="done">✓</span></div><div class="body"><p>Play music with your hand, without touching anything.</p><div class="pillrow" style="margin:0"><span class="pill ok">No extra parts</span><span class="pill">20 min</span><span class="pill">★★★</span></div></div></a><a class="card" id="c-p13" href="secret-knock.html" style="--pc:#be185d"><div class="band"><span class="num">13</span><h3>Secret knock lock</h3><span class="done">✓</span></div><div class="body"><p>Short, short, long. Only you know the knock that opens it.</p><div class="pillrow" style="margin:0"><span class="pill ok">No extra parts</span><span class="pill">30 min</span><span class="pill">★★★</span></div></div></a><a class="card" id="c-p14" href="people-counter.html" style="--pc:#16a34a"><div class="band"><span class="num">14</span><h3>People counter</h3><span class="done">✓</span></div><div class="body"><p>Count everyone who walks through, and ring when it gets crowded.</p><div class="pillrow" style="margin:0"><span class="pill ok">No extra parts</span><span class="pill">20 min</span><span class="pill">★★☆</span></div></div></a><a class="card" id="c-p15" href="hand-wave-switch.html" style="--pc:#0284c7"><div class="band"><span class="num">15</span><h3>Hand-wave switch</h3><span class="done">✓</span></div><div class="body"><p>Wave at the lamp to switch it. No buttons, no touching.</p><div class="pillrow" style="margin:0"><span class="pill blue">Resistor optional</span><span class="pill">25 min</span><span class="pill">★★★</span></div></div></a></div></div><footer>Chip Camp take-home kit · made by your trainer. All sketches are for the Arduino Nano.</footer><script>(function () {
+  var KEY = 'chipcampkit.built';
+  function load() { try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) { return {}; } }
+  function save(o) { try { localStorage.setItem(KEY, JSON.stringify(o)); } catch (e) {} }
+  var built = load();
+  document.querySelectorAll('.code').forEach(function (box) {
+    var text = box.querySelector('textarea').value;
+    box.querySelector('[data-copy]').onclick = function (ev) {
+      var b = ev.currentTarget;
+      var done = function () { b.textContent = 'Copied!'; setTimeout(function () { b.textContent = 'Copy code'; }, 1600); };
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, function () { fallback(); });
+      else fallback();
+      function fallback() { var t = box.querySelector('textarea'); t.hidden = false; t.select(); document.execCommand('copy'); t.hidden = true; done(); }
+    };
+    box.querySelector('[data-dl]').onclick = function () {
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([text], { type: 'text/plain' }));
+      a.download = box.getAttribute('data-file');
+      document.body.appendChild(a); a.click(); a.remove();
+    };
+  });
+  var btn = document.querySelector('[data-built]');
+  if (btn) {
+    var id = btn.getAttribute('data-built');
+    var paint = function () { btn.textContent = built[id] ? 'Built it! (tap to undo)' : 'I built it!'; };
+    btn.onclick = function () { if (built[id]) delete built[id]; else built[id] = 1; save(built); paint(); };
+    paint();
+  }
+  var count = document.getElementById('count');
+  if (count) {
+    var n = 0;
+    Object.keys(built).forEach(function (k) { var c = document.getElementById('c-' + k); if (c) { c.classList.add('is-done'); n++; } });
+    count.textContent = n + ' of 15 built';
+  }
+})();
+</script></body></html>

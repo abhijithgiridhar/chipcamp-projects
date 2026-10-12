@@ -1,0 +1,4 @@
+.DS_Store
+.venv-qr/
+print/pdf/
+print/qr.svg.bak
