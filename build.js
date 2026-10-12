@@ -207,11 +207,11 @@ function boxPage() {
 function buyPage() {
   const link = (shop, term) => shop.search ? '<a href="' + shop.search + encodeURIComponent(term) + '" target="_blank" rel="noopener">' + shop.name + '</a>' : '';
   let b = '<div class="wrap"><div class="hero"><div><h1>Where to buy parts</h1><p class="lead">Spares, resistors, and things to grow your kit. Type the words in the last column into any shop below. Prices and stock change, so check the shop.</p></div><div class="art">' + ART.html('chip') + '</div></div>';
-  b += '<section class="block"><h2>Shops to search</h2><p>Open any of these and type what you need in their search box. The words to type are in the tables below.</p><ul class="plain">' + CAT.shops.map((z) => '<li><a href="' + z.url + '" target="_blank" rel="noopener"><b>' + z.name + '</b></a>: ' + esc(z.note) + '</li>').join('') + '</ul></section>
+  b += '<section class="block"><h2>Shops to search</h2><p>Open any of these and type what you need in their search box. The words to type are in the tables below.</p><ul class="plain">' + CAT.shops.map((z) => '<li><a href="' + z.url + '" target="_blank" rel="noopener"><b>' + z.name + '</b></a>: ' + esc(z.note) + '</li>').join('') + '</ul></section>';
   b += '<section class="block"><h2>You need these for the projects</h2><table><tr><th>Part</th><th>Why</th><th>Search for</th></tr>' + CAT.missing.map((x) => '<tr><td><b>' + esc(x.name) + '</b></td><td>' + esc(x.why) + '</td><td>' + '<code>' + esc(x.search) + '</code>' + '</td></tr>').join('') + '</table><div class="tip">Ask for "220 ohm, quarter watt, through hole". A pack of 100 costs very little and lasts a long time.</div></section>';
   b += '<section class="block"><h2>Spares for what is in your box</h2><table><tr><th>Part</th><th>Search for</th></tr>' + CAT.parts.map((x) => '<tr><td><b>' + esc(x.name) + '</b></td><td>' + '<code>' + esc(x.search) + '</code>' + '</td></tr>').join('') + '</table></section>';
   b += '<section class="block"><h2>Ideas for your next purchase</h2><table><tr><th>Part</th><th>What you could make</th><th>Search for</th></tr>' + CAT.next.map((x) => '<tr><td><b>' + esc(x.name) + '</b></td><td>' + esc(x.why) + '</td><td>' + '<code>' + esc(x.search) + '</code>' + '</td></tr>').join('') + '</table></section>';
-</div>';
+  b += '</div>';
   return shell('Buy parts · Chip Camp Kit', b, { page: 'buy.html' });
 }
 function learnPage() {
